@@ -1,25 +1,28 @@
 import UIKit
 
 class BaseViewController: UIViewController, CustomHeaderViewDelegate, SideMenuDelegate {
-
+    
     private var headerView: CustomHeaderView!
-    private var sideMenu: SideMenuView!
     private var dimmingView: UIView!
-    var isMenuVisible = false
+    private var sideMenu: SideMenuView!
+    private var isMenuVisible = false
 
+    var screenTitle: String {
+        return "Title"
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setupHeaderView()
+        setupHeader()
         setupSideMenu()
-        setupDimmingView()
-}
- 
-    private func setupHeaderView() {
+    }
+
+    private func setupHeader() {
         headerView = CustomHeaderView()
         headerView.translatesAutoresizingMaskIntoConstraints = false
-        headerView.delegate = self
         view.addSubview(headerView)
+        headerView.titleText = screenTitle
+        headerView.delegate = self
 
         NSLayoutConstraint.activate([
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -30,8 +33,23 @@ class BaseViewController: UIViewController, CustomHeaderViewDelegate, SideMenuDe
     }
 
     private func setupSideMenu() {
+        dimmingView = UIView()
+        dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        dimmingView.alpha = 0
+        dimmingView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(dimmingView)
+
+        NSLayoutConstraint.activate([
+            dimmingView.topAnchor.constraint(equalTo: view.topAnchor),
+            dimmingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            dimmingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            dimmingView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissMenu))
+        dimmingView.addGestureRecognizer(tapGesture)
+
         sideMenu = SideMenuView()
-        sideMenu.delegate = self
         sideMenu.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(sideMenu)
 
@@ -41,67 +59,39 @@ class BaseViewController: UIViewController, CustomHeaderViewDelegate, SideMenuDe
             sideMenu.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -250),
             sideMenu.widthAnchor.constraint(equalToConstant: 250)
         ])
+
+        sideMenu.delegate = self
     }
 
-    private func setupDimmingView() {
-        dimmingView = UIView()
-        dimmingView.translatesAutoresizingMaskIntoConstraints = false
-        dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.4)
-        dimmingView.alpha = 0
-        dimmingView.isUserInteractionEnabled = true
-        let tap = UITapGestureRecognizer(target: self, action: #selector(toggleMenu))
-        dimmingView.addGestureRecognizer(tap)
-        view.insertSubview(dimmingView, belowSubview: sideMenu)
-
-        NSLayoutConstraint.activate([
-            dimmingView.topAnchor.constraint(equalTo: view.topAnchor),
-            dimmingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            dimmingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            dimmingView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-    }
-
-    func setHeaderTitle(_ title: String) {
-        headerView.titleText = title
-    }
-
-    @objc func toggleMenu() {
-        isMenuVisible.toggle()
-
-        let sideMenuX = isMenuVisible ? 0 : -250
-        UIView.animate(withDuration: 0.3) {
-            self.sideMenu.frame.origin.x = CGFloat(sideMenuX)
-            self.dimmingView.alpha = self.isMenuVisible ? 1 : 0
-        }
-    }
-
-    // MARK: - Header Delegate
     func didTapMenuButton() {
         toggleMenu()
     }
 
-    // MARK: - Side Menu Delegate
+    private func toggleMenu() {
+        isMenuVisible.toggle()
+        view.bringSubviewToFront(dimmingView)
+        view.bringSubviewToFront(sideMenu)
+
+        UIView.animate(withDuration: 0.3) {
+            self.sideMenu.transform = self.isMenuVisible
+                ? CGAffineTransform(translationX: 250, y: 0)
+                : .identity
+            self.dimmingView.alpha = self.isMenuVisible ? 1 : 0
+        }
+    }
+
+    @objc private func dismissMenu() {
+        if isMenuVisible {
+            toggleMenu()
+        }
+    }
+
     func didSelectMenuOption(_ option: SideMenuOption) {
-        print("Tapped option: \(option)")
-        let fileName = (NSString(string: #file).lastPathComponent)
-        print("Triggered at \(fileName), line \(#line)")
-
-//        toggleMenu() // hide the menu first
-
         switch option {
         case .settings:
             performSegue(withIdentifier: "showSettings", sender: self)
         case .about:
             performSegue(withIdentifier: "showAbout", sender: self)
         }
-    }
-
-    // This method will be called in subclasses like HomeViewController
-    func handleMenuOption(_ option: SideMenuOption) {
-        // This method can be overridden in subclasses to handle menu options
-        print("handleMenuOption in BaseViewController - Option: \(option)")
-        let fileName = (NSString(string: #file).lastPathComponent)
-        print("Triggered at \(fileName), line \(#line)")
-
     }
 }
