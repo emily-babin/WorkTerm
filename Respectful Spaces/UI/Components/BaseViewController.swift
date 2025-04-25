@@ -1,3 +1,14 @@
+//
+//  BaseViewController.swift
+//  Respectful Spaces
+//
+//  Created by Emily Babin on 2025-04-25.
+//
+//  This class serves as a base view controller for all main screens.
+//  It contains the shared UI components: a custom header bar with a side menu
+//  Main classes can inherit this to keep a consistent layout
+//
+
 import UIKit
 
 class BaseViewController: UIViewController, CustomHeaderViewDelegate, SideMenuDelegate {
@@ -13,10 +24,12 @@ class BaseViewController: UIViewController, CustomHeaderViewDelegate, SideMenuDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupHeader()
         setupSideMenu()
     }
 
+    // MARK: Header
     private func setupHeader() {
         headerView = CustomHeaderView()
         headerView.translatesAutoresizingMaskIntoConstraints = false
@@ -32,6 +45,7 @@ class BaseViewController: UIViewController, CustomHeaderViewDelegate, SideMenuDe
         ])
     }
 
+    // MARK: Side Menu
     private func setupSideMenu() {
         dimmingView = UIView()
         dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.5)

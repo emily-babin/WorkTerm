@@ -1,0 +1,16 @@
+
+*.xcuserstate
+*.xcworkspace
+
+build/
+DerivedData/
+
+.swiftpm/
+
+*.xccheckout
+*.xcodeproj/project.xcworkspace/
+
+.DS_Store
+
+*.log
+*.swp

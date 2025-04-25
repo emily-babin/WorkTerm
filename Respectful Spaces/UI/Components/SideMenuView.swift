@@ -4,6 +4,8 @@
 //
 //  Created by Babin,Emily on 2025-04-24.
 //
+//  Controls the side menu that pops up on clicking the menu button
+//  in the header bar and the items that are in it
 
 import UIKit
 
@@ -16,10 +18,10 @@ enum SideMenuOption {
     case about
 }
 
+// MARK: - Side Menu
 class SideMenuView: UIView {
-
     weak var delegate: SideMenuDelegate?
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -30,6 +32,7 @@ class SideMenuView: UIView {
         setupView()
     }
 
+    // Menu UI Setup
     private func setupView() {
         backgroundColor = .systemGray6
         layer.shadowColor = UIColor.black.cgColor
@@ -37,35 +40,14 @@ class SideMenuView: UIView {
         layer.shadowOffset = CGSize(width: 3, height: 0)
         layer.shadowRadius = 6
 
-        // Settings Button
-        let settingsButton = UIButton(type: .system)
-        var settingsConfig = UIButton.Configuration.plain()
-        settingsConfig.title = "Settings"
-        settingsConfig.image = UIImage(systemName: "gearshape")
-        settingsConfig.imagePadding = 10
-        settingsConfig.baseForegroundColor = .label
-        settingsConfig.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
-        settingsButton.configuration = settingsConfig
-        settingsButton.contentHorizontalAlignment = .leading
-        settingsButton.addTarget(self, action: #selector(settingsTapped(_:)), for: .touchUpInside)
+        let settingsButton = createMenuButton(title: "Settings",
+                                              systemImage: "gearshape",
+                                              option: .settings)
 
-        print("Settings button added")
-        
-        // About Button
-        let aboutButton = UIButton(type: .system)
-        var aboutConfig = UIButton.Configuration.plain()
-        aboutConfig.title = "About"
-        aboutConfig.image = UIImage(systemName: "info.circle")
-        aboutConfig.imagePadding = 10
-        aboutConfig.baseForegroundColor = .label
-        aboutConfig.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
-        aboutButton.configuration = aboutConfig
-        aboutButton.contentHorizontalAlignment = .leading
-        aboutButton.addTarget(self, action: #selector(aboutTapped(_:)), for: .touchUpInside)
+        let aboutButton = createMenuButton(title: "About",
+                                           systemImage: "info.circle",
+                                           option: .about)
 
-        print("About button added")
-        
-        // Stack View to hold buttons
         let stackView = UIStackView(arrangedSubviews: [settingsButton, aboutButton])
         stackView.axis = .vertical
         stackView.spacing = 20
@@ -77,25 +59,27 @@ class SideMenuView: UIView {
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             stackView.topAnchor.constraint(equalTo: topAnchor, constant: 100)
         ])
-
     }
 
-    @objc private func settingsTapped(_ sender: UIButton) {
-        print("Settings tapped")
-        let fileName = (NSString(string: #file).lastPathComponent)
-        print("Triggered at \(fileName), line \(#line)")
+    // One function to create every button, just requires a title, image and the option
+    private func createMenuButton(title: String, systemImage: String, option: SideMenuOption) -> UIButton {
+        let button = UIButton(type: .system)
+        var config = UIButton.Configuration.plain()
+        config.title = title
+        config.image = UIImage(systemName: systemImage)
+        config.imagePadding = 10
+        config.baseForegroundColor = .label
+        config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+        button.configuration = config
+        button.contentHorizontalAlignment = .leading
 
-        animateButtonTap(sender)
-        delegate?.didSelectMenuOption(.settings)
-    }
+        button.addAction(UIAction { [weak self] _ in
+            guard let self = self else { return }
+            self.animateButtonTap(button)
+            self.delegate?.didSelectMenuOption(option)
+        }, for: .touchUpInside)
 
-    @objc private func aboutTapped(_ sender: UIButton) {
-        print("About tapped")
-        let fileName = (NSString(string: #file).lastPathComponent)
-        print("Triggered at \(fileName), line \(#line)")
-
-        animateButtonTap(sender)
-        delegate?.didSelectMenuOption(.about)
+        return button
     }
 
     private func animateButtonTap(_ button: UIButton) {
