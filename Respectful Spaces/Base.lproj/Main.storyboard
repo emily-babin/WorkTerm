@@ -49,6 +49,22 @@
             </objects>
             <point key="canvasLocation" x="1236" y="-458"/>
         </scene>
+        <!--Calendar View Controller-->
+        <scene sceneID="3ln-Iv-rn8">
+            <objects>
+                <viewController id="5JU-wx-eCH" customClass="CalendarViewController" customModule="Respectful_Spaces" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="jkF-fP-Vcp">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="hRE-R8-jDV"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="waN-Sf-Nsr"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ueU-sp-eve" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4570" y="-403"/>
+        </scene>
         <!--Home View Controller-->
         <scene sceneID="GTg-YL-DAY">
             <objects>
@@ -56,18 +72,32 @@
                     <view key="view" contentMode="scaleToFill" id="pA1-lv-E1P">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JOW-VQ-1wS">
+                                <rect key="frame" x="16" y="202" width="361" height="30"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="QTv-p7-57i"/>
+                                </constraints>
+                            </view>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="lx3-ug-Gjw"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="JOW-VQ-1wS" firstAttribute="leading" secondItem="lx3-ug-Gjw" secondAttribute="leading" constant="16" id="da3-q8-vJd"/>
+                            <constraint firstItem="lx3-ug-Gjw" firstAttribute="trailing" secondItem="JOW-VQ-1wS" secondAttribute="trailing" constant="16" id="vp1-uF-pUK"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Dpl-ct-YSM"/>
                     <connections>
                         <segue destination="dOV-xS-52P" kind="show" identifier="showSettings" id="Yq0-Ix-c4w"/>
                         <segue destination="Q5i-g4-fkf" kind="show" identifier="showAbout" id="Pfs-yO-JcX"/>
+                        <segue destination="5JU-wx-eCH" kind="show" identifier="showCalendarTEMP" id="VuA-rC-bcw"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CxZ-d7-t2E" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1236" y="-1137"/>
+            <point key="canvasLocation" x="1235.8778625954199" y="-1137.323943661972"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="q4r-tm-0Yn">
@@ -102,7 +132,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Hkg-RY-SgN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2182" y="-1137"/>
+            <point key="canvasLocation" x="2180.9160305343512" y="-1137.323943661972"/>
         </scene>
         <!--About View Controller-->
         <scene sceneID="nHl-Z6-ePo">
@@ -179,8 +209,8 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Hxj-dX-wVl"/>
-        <segue reference="u5u-Zt-Vfb"/>
+        <segue reference="Pfs-yO-JcX"/>
+        <segue reference="Yq0-Ix-c4w"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="hammer" catalog="system" width="128" height="117"/>

@@ -13,14 +13,12 @@ import UIKit
 
 class BaseViewController: UIViewController, CustomHeaderViewDelegate, SideMenuDelegate {
     
-    private var headerView: CustomHeaderView!
+    var headerView: CustomHeaderView!
     private var dimmingView: UIView!
     private var sideMenu: SideMenuView!
     private var isMenuVisible = false
 
-    var screenTitle: String {
-        return "Title"
-    }
+    var screenTitle: String { return "Title" }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,6 +104,8 @@ class BaseViewController: UIViewController, CustomHeaderViewDelegate, SideMenuDe
             performSegue(withIdentifier: "showSettings", sender: self)
         case .about:
             performSegue(withIdentifier: "showAbout", sender: self)
+        case .calendar:
+            performSegue(withIdentifier: "showCalendarTEMP", sender: self)
         }
     }
 }

@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		51815FD22DBBC7140044AE1D /* JTAppleCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 51815FD12DBBC7140044AE1D /* JTAppleCalendar */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		51792A9E2DB9621A00C4F371 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51815FD22DBBC7140044AE1D /* JTAppleCalendar in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +130,7 @@
 			);
 			name = "Respectful Spaces";
 			packageProductDependencies = (
+				51815FD12DBBC7140044AE1D /* JTAppleCalendar */,
 			);
 			productName = "Respectful Spaces";
 			productReference = 51792A872DB9621900C4F371 /* Respectful Spaces.app */;
@@ -208,6 +214,9 @@
 			);
 			mainGroup = 51792A7E2DB9621900C4F371;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				51815FD02DBBC7140044AE1D /* XCRemoteSwiftPackageReference "JTAppleCalendar" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 51792A882DB9621900C4F371 /* Products */;
 			projectDirPath = "";
@@ -569,6 +578,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		51815FD02DBBC7140044AE1D /* XCRemoteSwiftPackageReference "JTAppleCalendar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/patchthecode/JTAppleCalendar";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		51815FD12DBBC7140044AE1D /* JTAppleCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51815FD02DBBC7140044AE1D /* XCRemoteSwiftPackageReference "JTAppleCalendar" */;
+			productName = JTAppleCalendar;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 51792A7F2DB9621900C4F371 /* Project object */;
 }
