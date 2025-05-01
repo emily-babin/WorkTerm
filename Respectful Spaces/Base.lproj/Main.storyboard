@@ -173,7 +173,7 @@
         <scene sceneID="iHg-RB-bud">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="BhX-Cq-s67" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Scenarios" image="person" catalog="system" id="PUd-Dx-vTk"/>
+                    <tabBarItem key="tabBarItem" title="Scenarios" image="person" catalog="system" selectedImage="person.fill" id="PUd-Dx-vTk"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="rkR-oK-chO">
                         <rect key="frame" x="0.0" y="118" width="393" height="44"/>
@@ -209,8 +209,8 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Pfs-yO-JcX"/>
-        <segue reference="Yq0-Ix-c4w"/>
+        <segue reference="Hxj-dX-wVl"/>
+        <segue reference="u5u-Zt-Vfb"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="hammer" catalog="system" width="128" height="117"/>
@@ -218,6 +218,7 @@
         <image name="house" catalog="system" width="128" height="104"/>
         <image name="house.fill" catalog="system" width="128" height="104"/>
         <image name="person" catalog="system" width="128" height="121"/>
+        <image name="person.fill" catalog="system" width="128" height="120"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
