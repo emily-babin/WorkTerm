@@ -14,3 +14,5 @@ DerivedData/
 
 *.log
 *.swp
+
+GoogleService-Info.plist
