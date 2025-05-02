@@ -1,83 +1,62 @@
-//
-//  CustomHeaderView.swift
-//  Respectful Spaces
-//
-//  Created by Babin,Emily on 2025-04-23.
-//
-// Controls the header bar that appears at the top of the app
-
 import UIKit
 
-protocol CustomHeaderViewDelegate: AnyObject {
-    func didTapMenuButton()
-}
-
 class CustomHeaderView: UIView {
-    weak var delegate: CustomHeaderViewDelegate?
     
+    // MARK: - UI Elements
     let menuButton = UIButton(type: .system)
     let titleLabel = UILabel()
     let logoImageView = UIImageView()
-    var titleText: String = "" {
-        didSet {
-            titleLabel.text = titleText
-        }
-    }
     
+    // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
     }
-
-    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupView()
     }
-
     
+    // MARK: - Setup
     private func setupView() {
-        backgroundColor = .systemGray5
-        
+        // Menu Button
         menuButton.setImage(UIImage(systemName: "line.horizontal.3"), for: .normal)
-        menuButton.tintColor = .label
-        menuButton.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(menuButton)
         
-        titleLabel.text = "Page Title"
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        // Title
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
         titleLabel.textAlignment = .center
-        titleLabel.textColor = .label
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(titleLabel)
         
-        logoImageView.image = UIImage(named: "yellowHexagon")
-        logoImageView.tintColor = .label
+        // Logo Image
+        logoImageView.image = UIImage(systemName: "hexagon.fill")
         logoImageView.contentMode = .scaleAspectFit
-        logoImageView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(logoImageView)
+        logoImageView.tintColor = .systemYellow
         
+        // Order of Items in Header
+        let headerStack = UIStackView(arrangedSubviews: [menuButton, titleLabel, logoImageView])
+        headerStack.axis = .horizontal
+        headerStack.distribution = .equalCentering
+        headerStack.alignment = .center
+        headerStack.spacing = 8
+        headerStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(headerStack)
+        
+        // Constraints
         NSLayoutConstraint.activate([
-            menuButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            menuButton.centerYAnchor.constraint(equalTo: centerYAnchor),
-            menuButton.widthAnchor.constraint(equalToConstant: 24),
-            menuButton.heightAnchor.constraint(equalToConstant: 24),
-            
-            logoImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            logoImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            logoImageView.widthAnchor.constraint(equalToConstant: 50),
-            logoImageView.heightAnchor.constraint(equalToConstant: 50),
-            
-            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+            headerStack.topAnchor.constraint(equalTo: topAnchor),
+            headerStack.bottomAnchor.constraint(equalTo: bottomAnchor),
+            headerStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            headerStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            heightAnchor.constraint(equalToConstant: 50)
         ])
-        
-        menuButton.addTarget(self, action: #selector(menuButtonTapped), for: .touchUpInside)
-        
-    }
-
-    @objc private func menuButtonTapped() {
-        delegate?.didTapMenuButton()
     }
     
+    // MARK: - Public Methods
+    func setTitle(_ title: String) {
+        titleLabel.text = title
+    }
+    
+    func setMenuButtonAction(_ target: Any?, action: Selector) {
+        menuButton.addTarget(target, action: action, for: .touchUpInside)
+    }
 }

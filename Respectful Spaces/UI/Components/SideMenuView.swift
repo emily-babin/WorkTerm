@@ -16,9 +16,6 @@ protocol SideMenuDelegate: AnyObject {
 enum SideMenuOption {
     case settings
     case about
-    
-    // TEMPORARY
-    case calendar
 }
 
 // MARK: - Side Menu
@@ -46,10 +43,8 @@ class SideMenuView: UIView {
         let settingsButton = createMenuButton(title: "Settings", systemImage: "gearshape", option: .settings)
 
         let aboutButton = createMenuButton(title: "About",systemImage: "info.circle", option: .about)
-        // TEMPORARY
-        let calendarButton = createMenuButton(title: "Calendar", systemImage: "calendar", option: .calendar)
-        
-        let stackView = UIStackView(arrangedSubviews: [settingsButton, aboutButton, calendarButton])
+     
+        let stackView = UIStackView(arrangedSubviews: [settingsButton, aboutButton])
         stackView.axis = .vertical
         stackView.spacing = 20
         stackView.translatesAutoresizingMaskIntoConstraints = false

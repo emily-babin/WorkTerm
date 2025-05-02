@@ -7,5 +7,8 @@
 // Inherits the base view
 
 class ToolboxViewController: BaseViewController {
-    override var screenTitle: String { return "Toolbox" }
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setScreenTitle("Toolbox Talks")
+    }
 }

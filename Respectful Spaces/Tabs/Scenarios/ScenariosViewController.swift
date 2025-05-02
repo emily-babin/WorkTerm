@@ -7,5 +7,8 @@
 // Inherits the base view
 
 class ScenariosViewController: BaseViewController {
-    override var screenTitle: String { return "Scenarios" }
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setScreenTitle("Scenarios")
+    }
 }
