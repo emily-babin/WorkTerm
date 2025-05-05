@@ -70,6 +70,8 @@ class HomeViewController: BaseViewController, CalendarViewControllerDelegate {
         }
     }
     
+    
+    // Monthly Calendar - I'd like to move this into it's own ViewController
     func setupMonthlyCalendar() {
         // Initialize the monthly calendar view controller
         monthlyCalendarViewController = CalendarViewController()
