@@ -5,6 +5,9 @@ class HomeViewController: BaseViewController, CalendarViewControllerDelegate {
     // DB
     let db = Firestore.firestore()
     
+    // Event List
+    var listEventAll: [Event] = []
+    
     // MARK: - UI Elements
     let segmentedControl = UISegmentedControl(items: ["Monthly", "Weekly", "Daily"])
     let calendarContainer = UIView()
@@ -35,8 +38,13 @@ class HomeViewController: BaseViewController, CalendarViewControllerDelegate {
         layoutViews()
         showCalendar(type: .monthly)
         
-        // Initialize with placeholder event data
-        loadPlaceholderEvents()
+        Task {
+            await loadData()
+        }
+        
+        
+//        // Initialize with placeholder event data
+//        loadPlaceholderEvents()
     }
 
     // MARK: - Setup Methods
@@ -94,7 +102,7 @@ class HomeViewController: BaseViewController, CalendarViewControllerDelegate {
 
     func setupUpcomingEventsSection() {
         // Header Container
-        upcomingHeaderView.backgroundColor = .systemGray6
+        upcomingHeaderView.backgroundColor = .systemRed
         upcomingHeaderView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(upcomingHeaderView)
 
@@ -103,6 +111,7 @@ class HomeViewController: BaseViewController, CalendarViewControllerDelegate {
         upcomingLabel.font = UIFont.boldSystemFont(ofSize: 16)
         upcomingLabel.translatesAutoresizingMaskIntoConstraints = false
         upcomingHeaderView.addSubview(upcomingLabel)
+        upcomingLabel.textColor = .white
 
         // ScrollView and StackView
         upcomingEventsScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -190,6 +199,43 @@ class HomeViewController: BaseViewController, CalendarViewControllerDelegate {
     }
     
     // MARK: - Event Management
+    func loadData() async {
+        do {
+            let snapshot = try await db.collection("Events").getDocuments()
+            listEventAll.removeAll()
+
+            for document in snapshot.documents {
+                guard let array = document.get("array") as? [Timestamp],
+                      let timestamp = array.first,
+                      let name = document.get("name") as? String else {
+                    print("❌ Missing or malformed data in document \(document.documentID)")
+                    continue
+                }
+
+                let date = timestamp.dateValue()
+                let calendar = Calendar.current
+                let components = calendar.dateComponents([.year, .month, .day], from: date)
+
+                guard
+                      let month = components.month,
+                      let day = components.day else {
+                    continue
+                }
+
+                let event = Event(day: day, month: month, name: name)
+                listEventAll.append(event)
+            }
+
+            // Update the UI on the main thread
+            DispatchQueue.main.async {
+                self.updateUpcomingEvents(for: Date()) // Or pass in selected date
+            }
+
+        } catch {
+            print("Error getting documents: \(error)")
+        }
+    }
+
     
     // This is a placeholder function that would be replaced with real data fetching
     func loadPlaceholderEvents() {
@@ -197,89 +243,143 @@ class HomeViewController: BaseViewController, CalendarViewControllerDelegate {
         upcomingEventsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         // Create example event cards
-        for i in 1...5 {
-            let eventCard = createEventCard(title: "Event \(i)", time: "10:00 AM", location: "Location \(i)")
-            upcomingEventsStack.addArrangedSubview(eventCard)
-        }
+//        for i in 1...5 {
+//            let eventCard = createEventCard(title: "Event \(i)", time: "10:00 AM", location: "Location \(i)")
+//            upcomingEventsStack.addArrangedSubview(eventCard)
+//        }
     }
     
     func updateUpcomingEvents(for date: Date) {
-        // Clear existing event cards
         upcomingEventsStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        // Format the date for display
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        let dateString = dateFormatter.string(from: date)
-        
-        // In a real app, you would filter events for the selected date
-        // For now, create some placeholder cards with the selected date
-        let eventCard = createEventCard(
-            title: "Selected Date Events",
-            time: "All Day",
-            location: "Events for \(dateString)"
-        )
-        upcomingEventsStack.addArrangedSubview(eventCard)
-        
-        // Add a few more random events
-        for i in 1...3 {
-            let hour = 8 + i * 2
-            let eventCard = createEventCard(
-                title: "Meeting \(i)",
-                time: "\(hour):00 AM",
-                location: "Conference Room \(i)"
-            )
-            upcomingEventsStack.addArrangedSubview(eventCard)
+
+        // Sort events by date if needed (optional but recommended)
+//        let calendar = Calendar.current
+//        let todayComponents = calendar.dateComponents([.month, .day], from: Date())
+
+        let sortedEvents = listEventAll.sorted {
+            if $0.month == $1.month {
+                return $0.day < $1.day
+            }
+            return $0.month < $1.month
+        }
+
+        var hasUpcoming = false
+
+        for event in sortedEvents {
+            // Optional: only show future events
+//            if event.month > todayComponents.month! ||
+//                (event.month == todayComponents.month! && event.day >= todayComponents.day!) {
+                let card = createEventCard(day: event.day, month: event.month, name: event.name)
+                upcomingEventsStack.addArrangedSubview(card)
+                hasUpcoming = true
+//            }
+        }
+
+        if !hasUpcoming {
+            let label = UILabel()
+            label.text = "No upcoming events."
+            label.textColor = .secondaryLabel
+            label.textAlignment = .center
+            upcomingEventsStack.addArrangedSubview(label)
         }
     }
-    
-    func createEventCard(title: String, time: String, location: String) -> UIView {
+
+
+    func createEventCard(day: Int, month: Int, name: String) -> UIView {
         let card = UIView()
-        card.backgroundColor = .secondarySystemBackground
-        card.layer.cornerRadius = 10
+        card.backgroundColor = .clear
         card.translatesAutoresizingMaskIntoConstraints = false
         
-        // Title label
-        let titleLabel = UILabel()
-        titleLabel.text = title
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        // Container with shadow
+        let container = UIView()
+        container.backgroundColor = .clear
+        container.layer.cornerRadius = 12
+        container.layer.shadowColor = UIColor.black.cgColor
+        container.layer.shadowOpacity = 0.1
+        container.layer.shadowOffset = CGSize(width: 0, height: 2)
+        container.layer.shadowRadius = 4
+        container.translatesAutoresizingMaskIntoConstraints = false
+        card.addSubview(container)
         
-        // Time label
-        let timeLabel = UILabel()
-        timeLabel.text = time
-        timeLabel.font = UIFont.systemFont(ofSize: 14)
-        timeLabel.textColor = .systemBlue
-        timeLabel.translatesAutoresizingMaskIntoConstraints = false
+        // Left view (month + day)
+        let leftView = UIView()
+        leftView.backgroundColor = UIColor.systemYellow
+        leftView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
+        leftView.layer.cornerRadius = 12
+        leftView.translatesAutoresizingMaskIntoConstraints = false
         
-        // Location label
-        let locationLabel = UILabel()
-        locationLabel.text = location
-        locationLabel.font = UIFont.systemFont(ofSize: 14)
-        locationLabel.textColor = .secondaryLabel
-        locationLabel.translatesAutoresizingMaskIntoConstraints = false
+        let dateFormatter = DateFormatter()
+        let fullMonth = dateFormatter.monthSymbols[month - 1].uppercased()
         
-        // Add all labels to the card
-        card.addSubview(titleLabel)
-        card.addSubview(timeLabel)
-        card.addSubview(locationLabel)
+        let monthLabel = UILabel()
+        monthLabel.text = fullMonth
+        monthLabel.font = UIFont.boldSystemFont(ofSize: 14)
+        monthLabel.textColor = .white
+        monthLabel.textAlignment = .center
         
-        // Layout constraints
+        let dayLabel = UILabel()
+        dayLabel.text = "\(day)"
+        dayLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        dayLabel.textColor = .white
+        dayLabel.textAlignment = .center
+        
+        let dateStack = UIStackView(arrangedSubviews: [monthLabel, dayLabel])
+        dateStack.axis = .vertical
+        dateStack.alignment = .center
+        dateStack.distribution = .fillEqually
+        dateStack.translatesAutoresizingMaskIntoConstraints = false
+        leftView.addSubview(dateStack)
+        
+        // Right view (event name)
+        let rightView = UIView()
+        rightView.backgroundColor = .white
+        rightView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+        rightView.layer.cornerRadius = 12
+        rightView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let nameLabel = UILabel()
+        nameLabel.text = name
+        nameLabel.font = UIFont.systemFont(ofSize: 16)
+        nameLabel.textColor = .label
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        rightView.addSubview(nameLabel)
+        
+        // Stack views horizontally
+        let containerStack = UIStackView(arrangedSubviews: [leftView, rightView])
+        containerStack.axis = .horizontal
+        containerStack.spacing = 0
+        containerStack.distribution = .fill
+        containerStack.alignment = .fill
+        containerStack.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(containerStack)
+        
+        // Constraints
         NSLayoutConstraint.activate([
-            card.heightAnchor.constraint(equalToConstant: 80),
+            card.heightAnchor.constraint(equalToConstant: 60),
             
-            titleLabel.topAnchor.constraint(equalTo: card.topAnchor, constant: 12),
-            titleLabel.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -16),
+            container.leadingAnchor.constraint(equalTo: card.leadingAnchor),
+            container.trailingAnchor.constraint(equalTo: card.trailingAnchor),
+            container.topAnchor.constraint(equalTo: card.topAnchor),
+            container.bottomAnchor.constraint(equalTo: card.bottomAnchor),
             
-            timeLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
-            timeLabel.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 16),
+            containerStack.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            containerStack.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            containerStack.topAnchor.constraint(equalTo: container.topAnchor),
+            containerStack.bottomAnchor.constraint(equalTo: container.bottomAnchor),
             
-            locationLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
-            locationLabel.leadingAnchor.constraint(equalTo: timeLabel.trailingAnchor, constant: 8),
-            locationLabel.trailingAnchor.constraint(lessThanOrEqualTo: card.trailingAnchor, constant: -16)
+            leftView.widthAnchor.constraint(equalToConstant: 80),
+            
+            dateStack.centerXAnchor.constraint(equalTo: leftView.centerXAnchor),
+            dateStack.centerYAnchor.constraint(equalTo: leftView.centerYAnchor),
+            
+            nameLabel.centerYAnchor.constraint(equalTo: rightView.centerYAnchor),
+            nameLabel.leadingAnchor.constraint(equalTo: rightView.leadingAnchor, constant: 16),
+            nameLabel.trailingAnchor.constraint(equalTo: rightView.trailingAnchor, constant: -16),
         ])
         
         return card
     }
+
+    
+    
 }

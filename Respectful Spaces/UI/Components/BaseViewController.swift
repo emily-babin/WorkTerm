@@ -147,6 +147,8 @@ class BaseViewController: UIViewController, SideMenuDelegate {
                 handleSettingsOption()
             case .about:
                 handleAboutOption()
+            case .resources:
+                handleResourcesOption()
         }
     }
     
@@ -159,5 +161,10 @@ class BaseViewController: UIViewController, SideMenuDelegate {
     func handleAboutOption() {
         print("About selected")
         performSegue(withIdentifier: "showAbout", sender: self)
+    }
+    
+    func handleResourcesOption() {
+        print("Resources selected")
+//        performSegue(withIdentifier: "showResources", sender: self)
     }
 }

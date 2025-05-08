@@ -16,6 +16,7 @@ protocol SideMenuDelegate: AnyObject {
 enum SideMenuOption {
     case settings
     case about
+    case resources
 }
 
 // MARK: - Side Menu
@@ -34,7 +35,7 @@ class SideMenuView: UIView {
 
     // Menu UI Setup
     private func setupView() {
-        backgroundColor = .systemGray6
+        backgroundColor = .systemRed
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.4
         layer.shadowOffset = CGSize(width: 3, height: 0)
@@ -43,8 +44,10 @@ class SideMenuView: UIView {
         let settingsButton = createMenuButton(title: "Settings", systemImage: "gearshape", option: .settings)
 
         let aboutButton = createMenuButton(title: "About",systemImage: "info.circle", option: .about)
+        
+        let resourcesButton = createMenuButton(title: "Resources",systemImage: "folder", option: .resources)
      
-        let stackView = UIStackView(arrangedSubviews: [settingsButton, aboutButton])
+        let stackView = UIStackView(arrangedSubviews: [settingsButton, aboutButton, resourcesButton])
         stackView.axis = .vertical
         stackView.spacing = 20
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -64,7 +67,7 @@ class SideMenuView: UIView {
         config.title = title
         config.image = UIImage(systemName: systemImage)
         config.imagePadding = 10
-        config.baseForegroundColor = .label
+        config.baseForegroundColor = .white
         config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
         button.configuration = config
         button.contentHorizontalAlignment = .leading
@@ -77,6 +80,7 @@ class SideMenuView: UIView {
 
         return button
     }
+
 
     private func animateButtonTap(_ button: UIButton) {
         UIView.animate(withDuration: 0.1,

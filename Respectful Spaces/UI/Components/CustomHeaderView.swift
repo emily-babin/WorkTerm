@@ -19,12 +19,15 @@ class CustomHeaderView: UIView {
     
     // MARK: - Setup
     private func setupView() {
+        backgroundColor = .systemRed
         // Menu Button
         menuButton.setImage(UIImage(systemName: "line.horizontal.3"), for: .normal)
+        menuButton.tintColor = .white
         
         // Title
         titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
         titleLabel.textAlignment = .center
+        titleLabel.textColor = .white
         
         // Logo Image
         logoImageView.image = UIImage(systemName: "hexagon.fill")
